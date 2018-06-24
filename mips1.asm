@@ -1,5 +1,5 @@
 .data
-
+	enter: .byte '\n'
 .text
 	main:
 		#Creando la pila
@@ -7,12 +7,15 @@
 		addi $t0, $zero, 5 #elemento 1
 		sw $t0, 0($sp)	#guardo el 5 en la pila
 		
+		
+		
 		#añadiendo el 3 a la pila
 		add $a0, $s0, $zero  #argumento a0 el num de elementos de la pila
 		add $a1, $zero, $sp  #argumento a1 la pila
 		addi $a2, $zero, 3   #argumento a2 el numero a agregar
 		jal push			 #llamando push
 		
+		jal altura
 		
 		#sumando
 		lw $t2, ($sp)
@@ -43,8 +46,7 @@
 			j loop
 		exit:
 			sw $a2, ($s0)		#agrego el numero al final de la pila
-			addi $a0, $a0, 1	#tamaño++		
-			
+			addi $a0, $a0, 1	#tamaño++					
     	
 		jr $ra
 		
@@ -61,4 +63,15 @@
 			lw $v1, ($s0)		#retorno el elemento que sacare
 			sw $zero, ($s0)		#convierto en 0 el ultimo elemento					
     	
+		jr $ra
+		
+	altura:
+		#Imprimir $a0 que es eargumento del tamaño
+		li $v0, 1	
+		syscall
+		#Imprimir un salto de linea
+		li $v0, 4	
+		la $a0, enter
+		syscall
+		
 		jr $ra

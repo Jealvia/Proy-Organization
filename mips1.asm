@@ -13,12 +13,11 @@
 	por: .asciiz "x"
 	divisio:   .asciiz "/"
 .text
-	main:
-		#Creando la pila
-		
-		addi $s0, $zero, 0 	#tamaño = 0
+	main:	
+		#Creando la pila		
+		addi $s0, $zero, 0 		#tamaño = 0
 		add $s1, $zero, $sp 	#mi pila estara en s1
-		addi $s2, $zero,0  	#bandera=0	
+		addi $s2, $zero,0  		#bandera=0	
 		while: #Se inicializa el main
 			bnez $s2,exit   #Se valida la condicion de salida si bandera no es igual a 0
 				#Se muestra el menu general
@@ -33,7 +32,7 @@
 				#Comienzo del menu con los casos
 				bne $t0,1,case1 #Se valida si el ingreso no es igual a 1
 				   #Inicio caso 1 si el valor es igual a 1
-				   #Se muestra al usuario que ingrese valor
+				   #Se pide al usuario que ingrese valor
 				   li $v0,4
   				   la $a0,ingreso
 				   syscall					
@@ -99,11 +98,6 @@
 					add $a1,$zero,$t3	#argumento a1 valor a operar
 					add $a2,$zero,$t4	#argumento a2 valor a operar				
 					jal suma		#Llamada a la funcion suma
-					#Se instancian los valores de la funcion
-				   	add $a0, $s0, $zero  #argumento a0 el numero de elementos de la pila
-				   	add $a1, $zero, $s1  #argumento a1 la pila
-				   	add $a2, $zero, $v1  #argumento a2 el numero a agregar
-				        jal push		#llamando push
 					j while			#Se retorna al while
 				      operacion1:
 				      bne $t1,2,operacion2 #Se valida si no se ingreso 2
@@ -129,10 +123,6 @@
 					add $a1,$zero,$t3	#argumento a1 valor a operar
 					add $a2,$zero,$t4	#argumento a2 valor a operar
 					jal resta		#Llamada a la funcion resta
-					add $a0, $s0, $zero  #argumento a0 el numero de elementos de la pila
-				   	add $a1, $zero, $s1  #argumento a1 la pila
-				   	add $a2, $zero, $v1  #argumento a2 el numero a agregar
-				        jal push		#llamando push
 					j while			#Se retorna al while
 				      operacion2:
 				      bne $t1,3,operacion3 #Se valida si no se ingreso 3
@@ -158,10 +148,6 @@
 					add $a1,$zero,$t3	#argumento a1 valor a operar
 					add $a2,$zero,$t4	#argumento a2 valor a operar	
 					jal multiplicacion	#se llama a la funcion multiplicacion
-					add $a0, $s0, $zero  #argumento a0 el numero de elementos de la pila
-				   	add $a1, $zero, $s1  #argumento a1 la pila
-				   	add $a2, $zero, $v1  #argumento a2 el numero a agregar
-				        jal push		#llamando push
 					j while			#Se retorna al while
 				      operacion3:
 				      bne $t1,4,operacion4 #Se valida si no se ingreso 4
@@ -187,10 +173,6 @@
 					add $a1,$zero,$t3	#argumento a1 valor a operar
 					add $a2,$zero,$t4	#argumento a2 valor a operar
 					jal division		#Se llama a la funcion division
-					add $a0, $s0, $zero  #argumento a0 el numero de elementos de la pila
-				   	add $a1, $zero, $s1  #argumento a1 la pila
-				   	add $a2, $zero, $v1  #argumento a2 el numero a agregar
-				        jal push		#llamando push
 					j while			#Se retorna al while
 				      operacion4: 		#Si no se ingreso una opcion valida muestra mensaje
 					#Se muestra el mensaje
@@ -211,118 +193,119 @@
 				         add $a0, $zero, $s0	#argumento a0 el numero de elementos de la pila		
 					 add $a1, $zero, $s1	#argumento a1 la pila
 			 		 jal mostrarPila	#Llamada a la funcion mostrar pila
-			 		 j while		#Se retorna al while
-			 	     elemInsuficiente:		#Si no hay ningun elemento se muesta el respectivo mensaje
-			 	        #Se muestra el mensaje
+			 		 j while			#Se retorna al while
+			 	     elemInsuficiente:	#Si la pila no tiene elementos suficientes
 			 	        li $v0,4
-			 	        la $a0,pilaVacia
+			 	        la $a0,pilaVacia	#Se avisa que la pila esta vacia
 			 	        syscall
 			 	        j while			#Se retorna al while
 				case5:
 				   bne $t0,6,case6 		#Se valida si el ingreso no es igual a 6
-				      #Se inicia la salida del while
-				      addi $s2,$s2,3		#Se cambia el valor de la bandera ahora igual a 3
-				      j exitWhile		#Se sale del while
-				case6:   			#Si no se ingresa una opcion valida muestra un mensaje
-				   #Se muestra el mensaje
+				      addi $s2,$s2,3
+				      j exitWhile			#Se sale del while
+				case6:   
 				   li $v0,4
-			 	   la $a0,opcionInvalida
+			 	   la $a0,opcionInvalida	#Aviso de que la opcion no es valida
 			 	   syscall
-			 	   j while			#Se retorna al while													
+			 	   j while			#Se retorna al while															
 		exitWhile:
-		   #Se cierra el programa	
-		   li $v0, 10	
-		   syscall
 		
+		li $v0, 10		#System.exit	
+		syscall
 		
 	suma:		
-		add $v1, $a1, $a2
+		add $v1, $a1, $a2	#Se suman los dos argumentos
+		#Se imprime el resultado
 		li $v0, 1
 		add $a0, $v1, 0	
 		syscall
 		
-		jr $ra
+		jr $ra			#Return
 	
 	resta:
-		sub $v1, $a1, $a2
+		sub $v1, $a1, $a2	#Se restan los dos argumentos
+		#Se imprime el resultado
 		li $v0, 1
 		add $a0, $v1, 0	
 		syscall
 		
-		jr $ra	
+		jr $ra			#Return	
 	
 	multiplicacion:
-		mul $v1, $a1, $a2
+		mul $v1, $a1, $a2	#Se multiplican los dos argumentos
+		#Se imprime el resultado
 		li $v0, 1
 		add $a0, $v1, 0	
 		syscall
 		
-		jr $ra	
+		jr $ra			#Return	
 	
 	division:
-		div $v1, $a1, $a2
+		div $v1, $a1, $a2	#Se dividen los dos argumentos
+		#Se imprime el resultado
 		li $v0, 1
 		add $a0, $v1, 0	
 		syscall
 		
-		jr $ra	
+		jr $ra			#Return	
 	
 	push:	 
-		add $t1, $a1, $zero  #copiando la pila a t1
-		addi $t0, $zero, 0   #la i=0 para el for
+		add $t1, $a1, $zero  #Copiando la pila a t1
+		addi $t0, $zero, 0   #La i=0 para el for
 		loop:
 			bge $t0, $a0, exit  #for de 0 al tamaño de la pila
-			addi $t1, $t1, 4    #sumo 4 al puntero de la pila
+			addi $t1, $t1, 4    #Se suma 4 al puntero de la pila
 			addi $t0, $t0, 1 	# i++
 			j loop
 		exit:			
-			sw $a2, ($t1)		#agrego el numero al final de la pila
+			sw $a2, ($t1)		#Se agrega el numero al final de la pila
 			addi $s0, $a0, 1	#tamaño++	
 			
-		jr $ra
+		jr $ra			#Return
 		
 	pop:	 
-		add $t1, $a1, $zero  #copiando la pila a t1
-		addi $t0, $zero, 0   #la i=0 para el for
+		add $t1, $a1, $zero  #Copiando la pila a t1
+		addi $t0, $zero, 0   #La i=0 para el for
 		addi $s0, $a0, -1	#tamaño--		
 		loop2:
 			bge $t0, $s0, exit2  #for de 0 al tamaño de la pila -1
-			addi $t1, $t1, 4    #sumo 4 al puntero de la pila
+			addi $t1, $t1, 4    #Se suma 4 al puntero de la pila
 			addi $t0, $t0, 1 	# i++
 			j loop2
 		exit2:		
-			lw $v1, ($t1)		#retorno el elemento que sacare
-			sw $zero, ($t1)		#convierto en 0 el ultimo elemento		
+			lw $v1, ($t1)		#Se retorna el elemento que sacare
+			sw $zero, ($t1)		#Se convierte en 0 el ultimo elemento		
 			#Imprimir el elemento que saque
 			li $v0, 1
 			add $a0, $zero, $v1	
 			syscall	
     	
-		jr $ra
+		jr $ra			#Return
 		
 	altura:
 		#Imprimir $a0 que es eargumento del tamaño
 		li $v0, 1	
-		add $a0, $s0, $zero  #argumento a0 el num de elementos de la pila
+		add $a0, $s0, $zero  #Argumento a0 el num de elementos de la pila
 		syscall
 		
-		jr $ra
+		jr $ra			#Return
 
 	mostrarPila:
-		add $t1, $a1, $zero  #copiando la pila a t1
-		addi $t0, $zero, 0   #la i=0 para el for
-		add $t2,$zero,$a0
+		add $t1, $a1, $zero  #Copiando la pila a t1
+		addi $t0, $zero, 0   #La i=0 para el for
+		add $t2, $zero, $a0	 #Se copia el tamaño de la pila
 		loop3:
-			bge $t0, $t2, exit3  #for de 0 al tamaño de la pila
+			bge $t0, $t2, exit3  	#for de 0 al tamaño de la pila
 			   addi $t0, $t0, 1 	# i++
-			   li $v0,1
+			   #Se imprime el elemento
+			   li $v0,1				
 			   lw $a0,($t1)
 			   syscall
+			   #Se imprime un separador
 			   li $v0,4
 			   la $a0,coma
 			   syscall
-			   addi $t1, $t1, 4    #sumo 4 al puntero de la pila
+			   addi $t1, $t1, 4    #Se suma 4 al puntero de la pila
 			   j loop3
 		exit3:	
-		   jr $ra
-			
+		   jr $ra			#Return

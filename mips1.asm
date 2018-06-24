@@ -16,14 +16,11 @@
 	main:
 		#Creando la pila
 		
-		addi $s0, $zero, 0 #tamaño = 0
+		addi $s0, $zero, 0 	#tamaño = 0
 		add $s1, $zero, $sp 	#mi pila estara en s1
-		addi $s2, $zero,0  #bandera=0
-		#addi $t0, $zero, 5 #elemento 1
-		#sw $t0, 0($s1)	#guardo el 5 en la pila		
-		
-		while:
-			bnez $s2,exit
+		addi $s2, $zero,0  	#bandera=0	
+		while: #Se inicializa el main
+			bnez $s2,exit   #Se valida la condicion de salida si bandera no es igual a 0
 				#Se muestra el menu general
 				li $v0,4
 				la $a0,menuGeneral
@@ -31,151 +28,172 @@
 				#Se recibe la entrada del usuario
 				li $v0,5 
 				syscall
-				add $t0,$v0,$zero #Se almacena el ingreso del usuario en t0
-				#Comienzo del menu
-				bne $t0,1,case1#Se valida si el ingreso no es igual a 1
+				#Se almacena el ingreso del usuario en t0
+				add $t0,$v0,$zero 
+				#Comienzo del menu con los casos
+				bne $t0,1,case1 #Se valida si el ingreso no es igual a 1
+				   #Inicio caso 1 si el valor es igual a 1
+				   #Se muestra al usuario que ingrese valor
 				   li $v0,4
   				   la $a0,ingreso
 				   syscall					
 				   #Se recibe el valor del usario
 				   li $v0,5 
 				   syscall
-				   #añadiendo el 3 a la pila
-				   add $a0, $s0, $zero  #argumento a0 el num de elementos de la pila
+				   #Se instancian los valores de la funcion
+				   add $a0, $s0, $zero  #argumento a0 el numero de elementos de la pila
 				   add $a1, $zero, $s1  #argumento a1 la pila
-				   add $a2, $zero, $v0   #argumento a2 el numero a agregar
-				   jal push			 #llamando push
-				   j while
-				case1:
-				   bne $t0,2,case2 #Se valida si el ingreso no es igual a 2
-				      beqz $s0,mensaje1#Se valida si la pila no tiene al menos un elemento
-				         add $a0, $zero, $s0		
-					 add $a1, $zero, $s1	
- 					 jal pop
- 					 j while
- 					mensaje1:
+				   add $a2, $zero, $v0  #argumento a2 el numero a agregar
+				   jal push		#llamando push
+				   j while		#Se retorna al while
+				case1:			#Si no es igual a 1 ingresa aqui
+				   bne $t0,2,case2 	#Se valida si el ingreso no es igual a 2
+				      beqz $s0,mensaje1	#Se valida si la pila no tiene al menos un elemento
+				         #Se instancian los valores de la funcion
+				         add $a0, $zero, $s0	#argumento a0 el numero de elementos de la pila	
+					 add $a1, $zero, $s1	#argumento a1 la pila
+ 					 jal pop	#Llamada a funcion pop
+ 					 j while	#Se retorna al while
+ 					mensaje1:	#Si la pila no tiene al menos un elemento se muestra un mensaje
  					   li $v0,4
  					   la $a0,faltanElemento
  					   syscall
- 					   j while
- 				case2:
- 				   bne $t0,3,case3 #Se valida si el ingreso no es igual a 3
+ 					   j while	#Se retorna al while
+ 				case2:			#Si no es igual a 2 ingresa aqui
+ 				   bne $t0,3,case3 	#Se valida si el ingreso no es igual a 3
+					#Se instancian los valores de la funcion
 					add $a0, $s0, $zero  #argumento a0 el num de elementos de la pila
-					jal altura
-					j while
-				case3:
-				   bne $t0,4,case4 #Se valida si el ingreso no es igual a 4
-				      ble $s0,1,faltElementos
-				      li $v0,4
-				      la $a0,menuOperaciones
-				      syscall
-				      #Se recibe la entrada del usuario
-				      li $v0,5 
-				      syscall
-				      add $t1,$v0,$zero #Se almacena el ingreso en t1
+					jal altura	#Llamada a la funcion altura
+					j while		#Se retorna al while
+				case3:			#Si no es igual a 3 ingresa aqui
+				   bne $t0,4,case4 	#Se valida si el ingreso no es igual a 4
+				      ble $s0,1,faltElementos	#Se valida que exista por lo menos dos elementos
+				         #Se muestra el menu de las operaciones
+				         li $v0,4
+				         la $a0,menuOperaciones
+				         syscall
+				         #Se recibe la entrada del usuario
+				         li $v0,5 
+				         syscall
+				         add $t1,$v0,$zero #Se almacena el ingreso en t1
 				      bne $t1,1,operacion1 #Se valida si no se ingreso 1
-				        add $a0, $zero, $s0		
-					add $a1, $zero, $s1	
- 					jal pop
-					add $t3, $zero, $a0
-					
+				        #Se instancian los valores de la funcion
+				        add $a0, $zero, $s0	#argumento a0 el num de elementos de la pila	
+					add $a1, $zero, $s1	#argumento a1 la pila
+ 					jal pop			#Llamada a la funcion pop para extraer el 1er elemento de la pila
+					add $t3, $zero, $a0	#Se agrega el elemento de la pila a t3
+					#Se muestra el signo suma
 					li $v0,4
 					la $a0,mas
 					syscall
-					add $a0, $zero, $s0		
-					add $a1, $zero, $s1	
- 					jal pop
-					add $t4, $zero, $a0
-					
+					#Se instancian los valores de la funcion
+					add $a0, $zero, $s0	#argumento a0 el num de elementos de la pila	
+					add $a1, $zero, $s1	#argumento a1 la pila
+ 					jal pop			#Llamada a la funcion pop para extraer el 1er elemento de la pila
+					add $t4, $zero, $a0	#Se agrega el elemento de la pila a t4
+					#Se muestra un igual
 					li $v0,4
 					la $a0,igual
 					syscall
-					add $a1,$zero,$t3	
-					add $a2,$zero,$t4					
-					jal suma
-					j while
+					#Se instancian los valores de la funcion
+					add $a1,$zero,$t3	#argumento a1 valor a operar
+					add $a2,$zero,$t4	#argumento a2 valor a operar				
+					jal suma		#Llamada a la funcion suma
+					j while			#Se retorna al while
 				      operacion1:
 				      bne $t1,2,operacion2 #Se valida si no se ingreso 2
-				        add $a0, $zero, $s0		
-					add $a1, $zero, $s1	
- 					jal pop
-					add $t3, $zero, $a0
-					
+				        #Se instancian los valores de la funcion
+				        add $a0, $zero, $s0	#argumento a0 el num de elementos de la pila	
+					add $a1, $zero, $s1	#argumento a1 la pila
+ 					jal pop			#Llamada a la funcion pop para extraer el 1er elemento de la pila
+					add $t3, $zero, $a0	#Se agrega el elemento de la pila a t3
+					#Se muestra un menos
 					li $v0,4
 					la $a0,menos
 					syscall
-					add $a0, $zero, $s0		
-					add $a1, $zero, $s1	
- 					jal pop
-					add $t4, $zero, $a0
-					
+					#Se instancian los valores de la funcion
+					add $a0, $zero, $s0	#argumento a0 el num de elementos de la pila	
+					add $a1, $zero, $s1	#argumento a1 la pila
+ 					jal pop			#Llamada a la funcion pop para extraer el 1er elemento de la pila
+					add $t4, $zero, $a0	#Se agrega el elemento de la pila a t4
+					#Se muestra un igual
 					li $v0,4
 					la $a0,igual
 					syscall
-					add $a1,$zero,$t3	
-					add $a2,$zero,$t4
-					jal resta
-					j while
+					#Se instancian los valores de la funcion
+					add $a1,$zero,$t3	#argumento a1 valor a operar
+					add $a2,$zero,$t4	#argumento a2 valor a operar
+					jal resta		#Llamada a la funcion resta
+					j while			#Se retorna al while
 				      operacion2:
 				      bne $t1,3,operacion3 #Se valida si no se ingreso 3
-				        add $a0, $zero, $s0		
-					add $a1, $zero, $s1	
- 					jal pop
-					add $t3, $zero, $a0
-					
+				        #Se instancian los valores de la funcion
+				        add $a0, $zero, $s0	#argumento a0 el num de elementos de la pila	
+					add $a1, $zero, $s1	#argumento a1 la pila
+ 					jal pop			#Llamada a la funcion pop para extraer el 1er elemento de la pila
+					add $t3, $zero, $a0	#Se agrega el elemento de la pila a t3
+					#Se muestra una x
 					li $v0,4
 					la $a0,por
 					syscall
-					add $a0, $zero, $s0		
-					add $a1, $zero, $s1	
- 					jal pop
-					add $t4, $zero, $a0
-					
+					#Se instancian los valores de la funcion
+					add $a0, $zero, $s0	#argumento a0 el num de elementos de la pila	
+					add $a1, $zero, $s1	#argumento a1 la pila
+ 					jal pop			#Llamada a la funcion pop para extraer el 1er elemento de la pila
+					add $t4, $zero, $a0	#Se agrega el elemento de la pila a t4
+					#Se muestra un igual
 					li $v0,4
 					la $a0,igual
 					syscall
-					add $a1,$zero,$t3	
-					add $a2,$zero,$t4	
-					jal multiplicacion
-					j while
+					#Se instancian los valores de la funcion
+					add $a1,$zero,$t3	#argumento a1 valor a operar
+					add $a2,$zero,$t4	#argumento a2 valor a operar	
+					jal multiplicacion	#se llama a la funcion multiplicacion
+					j while			#Se retorna al while
 				      operacion3:
 				      bne $t1,4,operacion4 #Se valida si no se ingreso 4
-				        add $a0, $zero, $s0		
-					add $a1, $zero, $s1	
- 					jal pop
-					add $t3, $zero, $a0
-					
+				        #Se instancian los valores de la funcion
+				        add $a0, $zero, $s0	#argumento a0 el num de elementos de la pila	
+					add $a1, $zero, $s1	#argumento a1 la pila
+ 					jal pop			#Llamada a la funcion pop para extraer el 1er elemento de la pila
+					add $t3, $zero, $a0	#Se agrega el elemento de la pila a t3
+					#Se muestra una barrita de division
 					li $v0,4
 					la $a0,divisio
 					syscall
-					add $a0, $zero, $s0		
-					add $a1, $zero, $s1	
- 					jal pop
-					add $t4, $zero, $a0
-					
+					#Se instancian los valores de la funcion
+					add $a0, $zero, $s0	#argumento a0 el num de elementos de la pila	
+					add $a1, $zero, $s1	#argumento a1 la pila
+ 					jal pop			#Llamada a la funcion pop para extraer el 1er elemento de la pila
+					add $t4, $zero, $a0	#Se agrega el elemento de la pila a t4
+					#Se muestra un igual
 					li $v0,4
 					la $a0,igual
 					syscall
-					add $a1,$zero,$t3	
-					add $a2,$zero,$t4
-					jal division
-					j while
-				      operacion4:
+					#Se instancian los valores de la funcion
+					add $a1,$zero,$t3	#argumento a1 valor a operar
+					add $a2,$zero,$t4	#argumento a2 valor a operar
+					jal division		#Se llama a la funcion division
+					j while			#Se retorna al while
+				      operacion4: 		#Si no se ingreso una opcion valida muestra mensaje
+					#Se muestra el mensaje
 					li $v0,4
 					la $a0,opcionInvalida
 					syscall
-					j case3
-				     faltElementos:
+					j case3			#Regresa al menu de operaciones
+				     faltElementos:		#Si no hay elementos suficientes muestra el respectivo mensaje
+				        #Se muestra el mensaje
 				        li $v0,4
 				        la $a0,faltanElemento
 				        syscall
-				        j while
+				        j while			#Se retorna al while
 				case4:
-				   bne $t0,5,case5 #Se valida si el ingreso no es igual a 5
-				      blez $s0,elemInsuficiente
-				         add $a0, $zero, $s0		
-					 add $a1, $zero, $s1	
-			 		 jal mostrarPila
+				   bne $t0,5,case5 		#Se valida si el ingreso no es igual a 5
+				      blez $s0,elemInsuficiente	#Se valida si no hay elementos en la pila
+				         #Se instancian los valores de la funcion
+				         add $a0, $zero, $s0	#argumento a0 el numero de elementos de la pila		
+					 add $a1, $zero, $s1	#argumento a1 la pila
+			 		 jal mostrarPila	#Llamada a la funcion mostrar pila
 			 		 j while
 			 	     elemInsuficiente:
 			 	        li $v0,4

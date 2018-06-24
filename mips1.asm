@@ -47,3 +47,18 @@
 			
     	
 		jr $ra
+		
+	pop:	 
+		add $s0, $a1, $zero  #copiando la pila a s0
+		addi $t0, $zero, 0   #la i=0 para el for
+		addi $a0, $a0, -1	#tamaño--
+		loop2:
+			bge $t0, $a0, exit2  #for de 0 al tamaño de la pila -1
+			addi $s0, $s0, 4    #sumo 4 al puntero de la pila
+			addi $t0, $t0, 1 	# i++
+			j loop
+		exit2:
+			lw $v1, ($s0)		#retorno el elemento que sacare
+			sw $zero, ($s0)		#convierto en 0 el ultimo elemento					
+    	
+		jr $ra

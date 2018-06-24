@@ -3,15 +3,20 @@
 .text
 	main:
 		#Creando la pila
-		addi $s0, $zero, 2 #2 elementos
+		addi $s0, $zero, 1 #2 elementos
 		addi $t0, $zero, 5 #elemento 1
 		addi $t1, $zero, 3 #elemento 2
-		sw $t0, ($sp)
-		sw $t1, 4($sp)	
+		sw $t0, 0($sp)
+		#sw $t1, 4($sp)	
+		
+		add $a0, $s0, $zero
+		#lw $t2, 0($sp)
+		add $a1, $zero, $sp
+		addi $a2, $zero, 3
+		jal push
 	
 		lw $t2, ($sp)
 		add $a1, $zero, $t2
-		addi $t4, $zero, 4
 		lw $t3, 4($sp)
 		add $a2, $zero, $t3
 	
@@ -30,7 +35,16 @@
 		jr $ra  #return
 	
 	push:	 
+		add $s0, $a1, $zero
+		addi $t0, $zero, 0
+		loop:
+			bge $t0, $a0, exit
+			addi $s0, $s0, 4
+			addi $t0, $t0, 1
+			j loop
+		exit:
+			sw $a2, ($s0)
+			addi $a0, $a0, 1			
+			
     	
-		sw $a1, ($sp)
-		
 		jr $ra
